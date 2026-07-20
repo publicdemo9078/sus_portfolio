@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Priya Kumari</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --bg:#07040d;
+    --bg2:#0d0620;
+    --purple:#8b3ff2;
+    --pink:#f72585;
+    --cyan:#3fd8f2;
+    --ink:#eae6f5;
+    --dim:#a89cc4;
+    --glass:rgba(255,255,255,0.05);
+    --glass-border:rgba(255,255,255,0.12);
+    --gold:#eab676;
+    --rose:#ff6f9c;
+    --silver:#c9d4ff;
+    --leaf:#4ce6a6;
+  }
+  .theme-home{ --accent:var(--gold); }
+  .theme-amma{ --accent:var(--rose); }
+  .theme-glam{ --accent:var(--silver); }
+  .theme-outside{ --accent:var(--leaf); }
+  *{margin:0; padding:0; box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    overflow-x:hidden;
+    position:relative;
+  }
+  h1,h2,h3,.display{
+    font-family:'Sora', sans-serif;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  a{ color:inherit; text-decoration:none; }
+
+  /* ---- particle canvas ---- */
+  #particles{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+  }
+
+  /* ---- ripple ---- */
+  .ripple{
+    position:fixed;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:9999;
+    background:radial-gradient(circle, rgba(139,63,242,0.55) 0%, rgba(247,37,133,0.25) 45%, rgba(0,0,0,0) 70%);
+    transform:translate(-50%,-50%) scale(0);
+    animation:rippleOut 0.9s ease-out forwards;
+  }
+  @keyframes rippleOut{
+    to{ transform:translate(-50%,-50%) scale(1); opacity:0; }
+  }
+
+  /* ---- glow orbs backdrop ---- */
+  .orb{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(90px);
+    z-index:0;
+    opacity:0.35;
+    pointer-events:none;
+  }
+  .orb-1{ width:480px; height:480px; background:var(--purple); top:-120px; left:-120px; }
+  .orb-2{ width:420px; height:420px; background:var(--pink); bottom:10%; right:-140px; }
+  .orb-3{ width:320px; height:320px; background:var(--cyan); top:40%; left:50%; opacity:0.18; }
+
+  /* ---- nav ---- */
+  nav{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:1.4rem 6vw;
+    backdrop-filter:blur(14px);
+    background:rgba(7,4,13,0.55);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .logo{
+    font-size:1.2rem;
+    font-weight:800;
+    background:linear-gradient(90deg, var(--purple), var(--pink));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .nav-links{
+    display:flex;
+    gap:2.2rem;
+    font-size:0.85rem;
+    color:var(--dim);
+  }
+  .nav-links a{ transition:color 0.25s ease; position:relative; }
+  .nav-links a:hover{ color:var(--ink); }
+  .nav-links a.active{ color:var(--pink); }
+
+  /* ---- hero ---- */
+  .hero{
+    position:relative;
+    z-index:2;
+    min-height:100svh;
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    align-items:center;
+    gap:3rem;
+    padding:9rem 6vw 5rem;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:0.6rem;
+    font-size:0.72rem;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--cyan);
+    margin-bottom:1.3rem;
+  }
+  .eyebrow::before{ content:"◆"; font-size:0.6rem; color:var(--pink); }
+  .hero h1{
+    font-size:clamp(2.6rem, 5vw, 4.2rem);
+    line-height:1.05;
+    margin-bottom:0.8rem;
+  }
+  .hero h1 span{
+    background:linear-gradient(90deg, var(--purple), var(--pink) 60%, var(--cyan));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .hero .role{
+    font-size:clamp(1.1rem, 2vw, 1.5rem);
+    color:var(--dim);
+    font-weight:500;
+    margin-bottom:1.4rem;
+  }
+  .hero .desc{
+    color:var(--dim);
+    font-size:0.98rem;
+    line-height:1.8;
+    max-width:46ch;
+    margin-bottom:2.2rem;
+  }
+  .btn-row{ display:flex; align-items:center; gap:1.2rem; flex-wrap:wrap; }
+  .btn-glow{
+    display:inline-flex;
+    align-items:center;
+    gap:0.6rem;
+    padding:0.9rem 1.8rem;
+    border-radius:40px;
+    background:linear-gradient(90deg, var(--purple), var(--pink));
+    color:#fff;
+    font-weight:600;
+    font-size:0.9rem;
+    box-shadow:0 0 30px -6px rgba(247,37,133,0.6);
+    transition:transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .btn-glow:hover{ transform:translateY(-2px); box-shadow:0 0 40px -4px rgba(247,37,133,0.85); }
+  .tags{ display:flex; gap:0.6rem; }
+  .tag-chip{
+    width:38px; height:38px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    font-size:1rem;
+  }
+
+  .hero-photo-wrap{
+    position:relative;
+    justify-self:center;
+    width:min(420px, 80vw);
+    aspect-ratio:1/1;
+  }
+  .photo-ring{
+    position:absolute;
+    inset:-14px;
+    border-radius:50%;
+    background:conic-gradient(from 0deg, var(--purple), var(--pink), var(--cyan), var(--purple));
+    filter:blur(1px);
+    animation:spin 10s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .hero-photo{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    overflow:hidden;
+    border:5px solid var(--bg);
+    z-index:2;
+  }
+  .hero-photo img{
+    width:100%; height:100%; object-fit:cover; object-position:50% 15%;
+  }
+  .badge{
+    position:absolute;
+    width:56px; height:56px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.4rem;
+    background:rgba(13,6,32,0.85);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(6px);
+    z-index:3;
+    box-shadow:0 0 25px -6px rgba(139,63,242,0.7);
+  }
+  .badge-1{ top:0; left:-10px; }
+  .badge-2{ top:20%; right:-20px; }
+  .badge-3{ bottom:6%; left:-24px; }
+  .badge-4{ bottom:-8px; right:14%; }
+
+  /* ---- section shell ---- */
+  section{
+    position:relative;
+    z-index:2;
+    padding:6rem 6vw;
+  }
+  .section-tag{
+    font-size:0.72rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--pink);
+    margin-bottom:0.7rem;
+  }
+  .section-title{
+    font-size:clamp(1.8rem, 3vw, 2.4rem);
+    margin-bottom:3rem;
+  }
+
+  /* ---- about glass card ---- */
+  .about-grid{
+    display:grid;
+    grid-template-columns:0.8fr 1.2fr;
+    gap:2.5rem;
+  }
+  .glass-card{
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    border-radius:20px;
+    padding:2.2rem;
+    backdrop-filter:blur(10px);
+  }
+  .about-grid .glass-card p{
+    color:var(--dim);
+    line-height:1.85;
+    font-size:0.98rem;
+    margin-bottom:1rem;
+  }
+  .stat-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1.2rem;
+  }
+  .stat-card{
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    border-radius:16px;
+    padding:1.4rem;
+    backdrop-filter:blur(10px);
+  }
+  .stat-card .num{
+    font-family:'Sora', sans-serif;
+    font-size:1.7rem;
+    font-weight:800;
+    background:linear-gradient(90deg, var(--purple), var(--cyan));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .stat-card .lbl{
+    font-size:0.78rem;
+    color:var(--dim);
+    margin-top:0.3rem;
+  }
+
+  /* ---- marquee banner ---- */
+  .marquee{
+    position:relative; z-index:2;
+    overflow:hidden;
+    padding:1.3rem 0;
+    background:linear-gradient(90deg, rgba(139,63,242,0.14), rgba(247,37,133,0.1), rgba(63,216,242,0.1));
+    border-top:1px solid var(--glass-border);
+    border-bottom:1px solid var(--glass-border);
+  }
+  .marquee-track{
+    display:flex; align-items:center;
+    gap:2.6rem;
+    width:max-content;
+    animation:marqueeScroll 26s linear infinite;
+  }
+  .marquee-track span{
+    font-family:'Sora', sans-serif;
+    font-weight:700;
+    font-size:1.05rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--dim);
+    white-space:nowrap;
+  }
+  .marquee-track span.dot{ color:var(--pink); font-size:0.7rem; }
+  @keyframes marqueeScroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+
+  /* ---- cursor spotlight ---- */
+  .spotlight{
+    position:fixed;
+    width:520px; height:520px;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:1;
+    background:radial-gradient(circle, rgba(139,63,242,0.14), rgba(247,37,133,0.05) 45%, transparent 70%);
+    transform:translate(-50%,-50%);
+    transition:opacity 0.4s ease;
+    opacity:0;
+  }
+
+  /* ---- gallery / story rows ---- */
+  .story{ display:flex; flex-direction:column; gap:6.5rem; }
+  .story-row{
+    display:flex;
+    align-items:center;
+    gap:3.5rem;
+    opacity:0;
+    transform:translateY(50px);
+  }
+  .story-row.flip{ flex-direction:row-reverse; }
+  .story-media{
+    position:relative;
+    flex:0 0 auto;
+    width:min(400px, 42vw);
+  }
+  .story-text{ flex:1; min-width:260px; }
+  .media-glow{
+    position:absolute;
+    inset:-30px;
+    border-radius:28px;
+    background:var(--accent, var(--purple));
+    filter:blur(60px);
+    opacity:0.35;
+    z-index:0;
+  }
+  .media-frame{
+    position:relative;
+    z-index:1;
+    border-radius:22px;
+    overflow:hidden;
+    border:1px solid var(--glass-border);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.6);
+  }
+  .media-frame img{
+    display:block;
+    width:100%;
+    height:420px;
+    object-fit:cover;
+    transition:transform 0.7s ease;
+  }
+  .story-media:hover .media-frame img{ transform:scale(1.05) rotate(-0.5deg); }
+  .theme-icon{
+    position:absolute;
+    bottom:-16px; right:-16px;
+    z-index:2;
+    width:58px; height:58px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5rem;
+    background:rgba(13,6,32,0.9);
+    border:1px solid var(--glass-border);
+    box-shadow:0 0 24px -4px var(--accent, var(--purple));
+  }
+  .story-tag{
+    display:inline-block;
+    font-size:0.7rem;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--accent, var(--pink));
+    margin-bottom:0.8rem;
+  }
+  .story-text h3{
+    font-size:clamp(1.4rem, 2.4vw, 1.9rem);
+    margin-bottom:0.9rem;
+  }
+  .story-text p{
+    color:var(--dim);
+    line-height:1.85;
+    font-size:0.98rem;
+    max-width:48ch;
+  }
+  .story-quote{
+    margin-top:1.2rem;
+    font-family:'Sora', sans-serif;
+    font-style:normal;
+    font-weight:600;
+    font-size:0.95rem;
+    color:var(--accent, var(--cyan));
+  }
+
+  /* floating theme decorations */
+  .float-deco{ position:absolute; pointer-events:none; font-size:1.3rem; z-index:2; }
+  .theme-amma .float-deco{ animation:floatHeart 3.4s ease-in-out infinite; }
+  .theme-outside .float-deco{ animation:driftLeaf 4.2s ease-in-out infinite; }
+  .theme-glam .float-deco{ animation:twinkle 2.4s ease-in-out infinite; }
+  @keyframes floatHeart{ 0%,100%{ transform:translateY(0) scale(1); opacity:0.75; } 50%{ transform:translateY(-16px) scale(1.2); opacity:1; } }
+  @keyframes driftLeaf{ 0%{ transform:translate(0,0) rotate(0deg); opacity:0.8; } 50%{ transform:translate(10px,-16px) rotate(18deg); opacity:1; } 100%{ transform:translate(-6px,-2px) rotate(-10deg); opacity:0.8; } }
+  @keyframes twinkle{ 0%,100%{ opacity:0.25; transform:scale(0.75); } 50%{ opacity:1; transform:scale(1.25); } }
+
+  /* ---- journey timeline ---- */
+  .journey{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    gap:2.2rem;
+    max-width:760px;
+    padding-left:4px;
+  }
+  .journey::before{
+    content:"";
+    position:absolute;
+    left:33px; top:12px; bottom:12px;
+    width:2px;
+    background:linear-gradient(180deg, var(--purple), var(--pink), var(--cyan));
+    opacity:0.5;
+  }
+  .j-item{
+    position:relative;
+    display:grid;
+    grid-template-columns:68px 1fr;
+    gap:1.4rem;
+    align-items:flex-start;
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    border-radius:16px;
+    padding:1.5rem 1.7rem;
+    opacity:0;
+    transform:translateX(-30px);
+    transition:border-color 0.3s ease, transform 0.3s ease;
+  }
+  .j-item:hover{ border-color:rgba(247,37,133,0.4); transform:translateX(4px); }
+  .j-icon{
+    position:relative;
+    z-index:1;
+    width:68px; height:68px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5rem;
+    background:rgba(13,6,32,0.95);
+    border:2px solid var(--pink);
+    box-shadow:0 0 22px -4px rgba(247,37,133,0.7);
+  }
+  .j-year{
+    font-family:'Sora', sans-serif;
+    font-weight:800;
+    color:var(--cyan);
+    font-size:0.85rem;
+    letter-spacing:0.08em;
+    margin-bottom:0.35rem;
+  }
+  .j-item h3{ font-size:1.1rem; margin-bottom:0.4rem; }
+  .j-item p{ color:var(--dim); font-size:0.92rem; line-height:1.7; }
+
+  /* ---- contact / footer ---- */
+  footer{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    padding:6rem 6vw 3rem;
+  }
+  footer .glass-card{
+    max-width:620px;
+    margin:0 auto;
+    position:relative;
+    border:1px solid transparent;
+    background:
+      linear-gradient(var(--bg2), var(--bg2)) padding-box,
+      linear-gradient(120deg, var(--purple), var(--pink), var(--cyan)) border-box;
+  }
+  .foot-icons{
+    display:flex; justify-content:center; gap:1rem;
+    margin-bottom:1.6rem;
+  }
+  .foot-icons span{
+    width:44px; height:44px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    font-size:1.1rem;
+  }
+  footer h2{
+    font-size:2rem;
+    margin-bottom:0.8rem;
+    background:linear-gradient(90deg, var(--purple), var(--pink), var(--cyan));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  footer p{ color:var(--dim); margin-bottom:1.8rem; }
+  .foot-note{
+    margin-top:3rem;
+    font-size:0.72rem;
+    letter-spacing:0.12em;
+    color:#5c5277;
+  }
+
+  @media (max-width: 880px){
+    .hero{ grid-template-columns:1fr; padding-top:8rem; text-align:center; }
+    .hero .desc{ margin-inline:auto; }
+    .btn-row{ justify-content:center; }
+    .about-grid{ grid-template-columns:1fr; }
+    .story-row, .story-row.flip{ flex-direction:column; gap:2rem; }
+    .story-media{ width:100%; }
+    .media-frame img{ height:320px; }
+    .nav-links{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<canvas id="particles"></canvas>
+<div class="spotlight" id="spotlight"></div>
+
+<nav>
+  <div class="logo">Priya&lt;/&gt;</div>
+  <div class="nav-links">
+    <a href="#home" class="active">Home</a>
+    <a href="#about">About</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#journey">Journey</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-text">
+    <div class="eyebrow">Kolkata &middot; West Bengal</div>
+    <h1>Hi, I'm <span>Priya</span></h1>
+    <div class="role">RRB Aspirant &middot; B.A. Graduate</div>
+    <p class="desc">Golden hour, a flowing ivory gown, and a look aimed somewhere just past the frame — steady, unhurried, sure of where she's headed. That's Priya on a good night out, and honestly, most days too.</p>
+    <div class="btn-row">
+      <a href="#gallery" class="btn-glow">View Gallery ↓</a>
+      <div class="tags">
+        <div class="tag-chip">🎓</div>
+        <div class="tag-chip">🚆</div>
+        <div class="tag-chip">📚</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-photo-wrap">
+    <div class="photo-ring"></div>
+    <div class="hero-photo"><img src="images/pri.jpeg" alt="Priya"></div>
+    <div class="badge badge-1">🎓</div>
+    <div class="badge badge-2">🚆</div>
+    <div class="badge badge-3">✨</div>
+    <div class="badge badge-4">📖</div>
+  </div>
+</section>
+
+<div class="marquee">
+  <div class="marquee-track">
+    <span>Graduate</span><span class="dot">✦</span>
+    <span>Dreamer</span><span class="dot">✦</span>
+    <span>Future Railway Officer</span><span class="dot">✦</span>
+    <span>Daughter</span><span class="dot">✦</span>
+    <span>Sister</span><span class="dot">✦</span>
+    <span>Graduate</span><span class="dot">✦</span>
+    <span>Dreamer</span><span class="dot">✦</span>
+    <span>Future Railway Officer</span><span class="dot">✦</span>
+    <span>Daughter</span><span class="dot">✦</span>
+    <span>Sister</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<section id="about">
+  <div class="section-tag">01 — About</div>
+  <h2 class="section-title">The person behind the photos</h2>
+  <div class="about-grid">
+    <div class="glass-card">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="num">2015</div><div class="lbl">Matriculation, WB Board</div></div>
+        <div class="stat-card"><div class="num">2021</div><div class="lbl">B.A., Univ. of Calcutta</div></div>
+        <div class="stat-card"><div class="num">2026</div><div class="lbl">RRB CEN 09/2025</div></div>
+        <div class="stat-card"><div class="num">24</div><div class="lbl">South 24 Parganas</div></div>
+      </div>
+    </div>
+    <div class="glass-card">
+      <p>Priya is from Kolkata's South 24 Parganas — Bengali by roots, warm by nature, and someone who takes both her festivals and her exams seriously.</p>
+      <p>Since finishing her Arts degree at the University of Calcutta, she's been preparing for the Railway Recruitment Board exam, chasing the kind of stability that makes a whole family proud.</p>
+      <p>Off duty, she's the one twirling in a saree at a wedding, or walking a quiet riverside path in a bright pink jacket — equal parts festive and grounded.</p>
+    </div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="section-tag">02 — Gallery</div>
+  <h2 class="section-title">Moments, captioned</h2>
+
+  <div class="story">
+
+    <div class="story-row theme-home">
+      <div class="story-media">
+        <div class="media-glow"></div>
+        <div class="media-frame"><img src="images/pri4.jpeg" alt="Priya in a blue kurti" style="object-position:50% 18%;"></div>
+        <div class="theme-icon">🏠</div>
+      </div>
+      <div class="story-text">
+        <span class="story-tag">Chapter 01 · At Home</span>
+        <h3>Royal Blue, At Home</h3>
+        <p>A deep blue kurti with pearl embroidery, mehendi still fresh on her hands. Shot at home mid-celebration, caught mid-smile between courses — the kind of comfort only home light gives you.</p>
+        <div class="story-quote">✦ Warm walls, warmer welcome.</div>
+      </div>
+    </div>
+
+    <div class="story-row flip theme-amma">
+      <div class="story-media">
+        <div class="media-glow"></div>
+        <div class="media-frame"><img src="images/pri3.jpeg" alt="Priya with her mother" style="object-position:60% 25%;"></div>
+        <div class="theme-icon">💗</div>
+        <span class="float-deco" style="top:8%; left:-6%; animation-delay:0s;">💗</span>
+        <span class="float-deco" style="top:55%; right:-8%; animation-delay:0.8s;">💕</span>
+        <span class="float-deco" style="bottom:6%; left:14%; animation-delay:1.6s; font-size:1rem;">💖</span>
+      </div>
+      <div class="story-text">
+        <span class="story-tag">Chapter 02 · With Amma</span>
+        <h3>Her First Home</h3>
+        <p>A wedding-hall selfie in teal and black, gold drapes glowing behind them. Priya and her mother, shoulder to shoulder, both dressed up and unmistakably each other's people.</p>
+        <div class="story-quote">✦ A mother's love needs no caption.</div>
+      </div>
+    </div>
+
+    <div class="story-row theme-glam">
+      <div class="story-media">
+        <div class="media-glow"></div>
+        <div class="media-frame"><img src="images/pri2.jpeg" alt="Priya in a teal saree" style="object-position:50% 30%;"></div>
+        <div class="theme-icon">💎</div>
+        <span class="float-deco" style="top:10%; right:2%; animation-delay:0s;">✦</span>
+        <span class="float-deco" style="bottom:22%; left:-4%; animation-delay:0.6s; font-size:0.9rem;">✧</span>
+        <span class="float-deco" style="top:45%; right:-6%; animation-delay:1.2s; font-size:0.8rem;">✦</span>
+      </div>
+      <div class="story-text">
+        <span class="story-tag">Chapter 03 · Teal &amp; Silver</span>
+        <h3>Teal &amp; Silver</h3>
+        <p>A quieter close-up from the same evening — statement earrings catching the light, soft eyeliner, eyes cast down in a candid, unposed second between photos.</p>
+        <div class="story-quote">✦ Dressed up, still herself.</div>
+      </div>
+    </div>
+
+    <div class="story-row flip theme-outside">
+      <div class="story-media">
+        <div class="media-glow"></div>
+        <div class="media-frame"><img src="images/pri1.jpeg" alt="Priya walking outdoors" style="object-position:50% 15%;"></div>
+        <div class="theme-icon">🌿</div>
+        <span class="float-deco" style="top:10%; left:-6%; animation-delay:0s;">🍃</span>
+        <span class="float-deco" style="bottom:16%; right:-6%; animation-delay:1s;">🍃</span>
+        <span class="float-deco" style="top:50%; right:6%; animation-delay:2s; font-size:1rem;">🌿</span>
+      </div>
+      <div class="story-text">
+        <span class="story-tag">Chapter 04 · Enjoying Outside</span>
+        <h3>Riverside Walk</h3>
+        <p>Hot-pink hoodie, teal trousers, backpack slung on one shoulder — a casual daylight walk along a quiet fenced path, palms swaying and no particular hurry to be anywhere.</p>
+        <div class="story-quote">✦ Fresh air, easy pace.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="journey">
+  <div class="section-tag">03 — Journey</div>
+  <h2 class="section-title">Where she's headed</h2>
+  <div class="journey">
+    <div class="j-item">
+      <div class="j-icon">📘</div>
+      <div>
+        <div class="j-year">2015</div>
+        <h3>Matriculation</h3>
+        <p>Completed her 10th standard, West Bengal Board of Secondary Education.</p>
+      </div>
+    </div>
+    <div class="j-item">
+      <div class="j-icon">🎓</div>
+      <div>
+        <div class="j-year">2021</div>
+        <h3>Bachelor's in Arts</h3>
+        <p>Graduated from the University of Calcutta, building the foundation for what comes next.</p>
+      </div>
+    </div>
+    <div class="j-item">
+      <div class="j-icon">🚆</div>
+      <div>
+        <div class="j-year">2026</div>
+        <h3>RRB Kolkata, CEN 09/2025</h3>
+        <p>Registered for Level 1 posts under the 7th CPC Pay Matrix — the exam she's preparing hard for right now.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="glass-card">
+    <div class="foot-icons">
+      <span>🎓</span><span>🚆</span><span>💜</span>
+    </div>
+    <h2>Cheering Her On</h2>
+    <p>A little corner of the internet, made with love, to root for Priya as she works toward the Railways.</p>
+    <a href="#home" class="btn-glow">Back to Top ↑</a>
+  </div>
+  <div class="foot-note">MADE FOR FAMILY &middot; PRIYA KUMARI &middot; 2026</div>
+</footer>
+
+<script>
+  // ---------- particle field ----------
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let w, h, particles;
+
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight * (document.body.scrollHeight / window.innerHeight);
+    canvas.style.height = document.body.scrollHeight + 'px';
+  }
+
+  function initParticles(){
+    particles = Array.from({length: 70}, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: Math.random() * 1.6 + 0.4,
+      vy: Math.random() * 0.25 + 0.05,
+      vx: (Math.random() - 0.5) * 0.15,
+      hue: Math.random() > 0.5 ? '139,63,242' : '247,37,133',
+      alpha: Math.random() * 0.5 + 0.2
+    }));
+  }
+
+  function tick(){
+    ctx.clearRect(0,0,w,h);
+    for(const p of particles){
+      p.y -= p.vy;
+      p.x += p.vx;
+      if(p.y < -10) p.y = h + 10;
+      if(p.x < -10) p.x = w + 10;
+      if(p.x > w + 10) p.x = -10;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${p.hue},${p.alpha})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('resize', () => { resize(); initParticles(); });
+  resize();
+  initParticles();
+  tick();
+
+  // ---------- ripple on click/touch ----------
+  function spawnRipple(x, y){
+    const r = document.createElement('div');
+    r.className = 'ripple';
+    const size = 260;
+    r.style.width = size + 'px';
+    r.style.height = size + 'px';
+    r.style.left = x + 'px';
+    r.style.top = y + 'px';
+    document.body.appendChild(r);
+    setTimeout(() => r.remove(), 900);
+  }
+  window.addEventListener('click', e => spawnRipple(e.clientX, e.clientY));
+  window.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    spawnRipple(t.clientX, t.clientY);
+  }, {passive:true});
+
+  // ---------- scroll reveal ----------
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.from('.hero-text > *', {
+    y: 30, opacity: 0, duration: 0.9, stagger: 0.12, ease: 'power3.out', delay: 0.2
+  });
+  gsap.from('.hero-photo-wrap', {
+    scale: 0.85, opacity: 0, duration: 1, ease: 'power3.out', delay: 0.3
+  });
+
+  gsap.utils.toArray('.story-row').forEach((el) => {
+    gsap.to(el, {
+      opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+      scrollTrigger: { trigger: el, start: 'top 82%' }
+    });
+  });
+
+  // ---------- cursor spotlight ----------
+  const spotlight = document.getElementById('spotlight');
+  let spotActive = false;
+  window.addEventListener('mousemove', e => {
+    spotlight.style.left = e.clientX + 'px';
+    spotlight.style.top = e.clientY + 'px';
+    if(!spotActive){ spotlight.style.opacity = '1'; spotActive = true; }
+  });
+  window.addEventListener('mouseleave', () => { spotlight.style.opacity = '0'; spotActive = false; });
+
+  gsap.utils.toArray('.j-item').forEach((el, i) => {
+    gsap.to(el, {
+      opacity: 1, x: 0, duration: 0.8, ease: 'power3.out',
+      scrollTrigger: { trigger: el, start: 'top 88%' },
+      delay: i * 0.08
+    });
+  });
+
+  gsap.utils.toArray('.stat-card').forEach((el, i) => {
+    gsap.from(el, {
+      opacity: 0, y: 20, duration: 0.6, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 90%' },
+      delay: i * 0.06
+    });
+  });
+
+  // active nav link on scroll
+  const sections = ['home','about','gallery','journey','contact'].map(id => document.getElementById(id));
+  const navLinks = document.querySelectorAll('.nav-links a');
+  ScrollTrigger.create({
+    trigger: document.body,
+    start: 'top top',
+    end: 'bottom bottom',
+    onUpdate: () => {
+      let current = sections[0].id;
+      for(const s of sections){
+        if(window.scrollY >= s.offsetTop - window.innerHeight/2) current = s.id;
+      }
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+    }
+  });
+</script>
+
+</body>
+</html>
